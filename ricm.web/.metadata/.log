@@ -1,0 +1,43 @@
+!SESSION 2026-03-26 21:55:12.357 -----------------------------------------------
+eclipse.buildId=4.39.0.20260305-0817
+java.version=21.0.10
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=fr_FR
+Framework arguments:  -product org.eclipse.epp.package.java.product
+Command-line arguments:  -os linux -ws gtk -arch x86_64 -product org.eclipse.epp.package.java.product
+
+!ENTRY ch.qos.logback.classic 1 0 2026-03-26 21:55:14.819
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY ch.qos.logback.classic 1 0 2026-03-26 21:55:45.131
+!MESSAGE Logback config file: /home/ray/Documents/Projet-HTTP-Server/ricm.web/.metadata/.plugins/org.eclipse.m2e.logback/logback.2.7.101.20251017-1242.xml
+
+!ENTRY com.microsoft.copilot.eclipse 1 0 2026-03-26 21:55:48.131
+!MESSAGE [Info] Starting language server with binary lsp agent.
+
+!ENTRY com.microsoft.copilot.eclipse 1 0 2026-03-26 21:55:48.132
+!MESSAGE [Info] Found native binary in fragment bundle: com.microsoft.copilot.eclipse.core.agent.linux.x64
+
+!ENTRY com.microsoft.copilot.eclipse 1 0 2026-03-26 21:55:48.199
+!MESSAGE [Info] Lsp agent started successfully.
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-03-26 21:55:51.078
+!MESSAGE [LS:GitHub Copilot Language Server][Info]	[lsp] GitHub Copilot Language Server 1.401.0 initialized
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-03-26 21:55:51.093
+!MESSAGE [LS:GitHub Copilot Language Server][Info]	[default] Policy watcher not supported on this platform: Unsupported platform
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-03-26 21:55:51.157
+!MESSAGE [LS:GitHub Copilot Language Server][Info]	[certificates] Removed 1 expired certificates
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-03-26 21:55:51.390
+!MESSAGE [LS:GitHub Copilot Language Server][Info]	[GithubAvailableEmbeddingTypes] Got embeddings. Primary: metis-1024-I16-Binary. Deprecated: 
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-03-26 21:55:51.761
+!MESSAGE [LS:GitHub Copilot Language Server][Info]	[AutoModelService] Auto model cache cleared due to token update
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-03-26 21:55:51.763
+!MESSAGE [LS:GitHub Copilot Language Server][Info]	[Semantic Search] Semantic search is disabled { reason: 'watchedFiles capability is not available' }
+
+!ENTRY org.eclipse.lsp4e 1 0 2026-03-26 21:55:51.763
+!MESSAGE [LS:GitHub Copilot Language Server][Info]	[CopilotMCP] MCP state changed from false to true
