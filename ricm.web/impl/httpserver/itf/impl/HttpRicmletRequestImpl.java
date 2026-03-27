@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import httpserver.itf.HttpRicmletRequest;
 import httpserver.itf.HttpResponse;
 import httpserver.itf.HttpSession;
@@ -12,7 +13,8 @@ import httpserver.itf.HttpSession;
 public class HttpRicmletRequestImpl extends HttpRicmletRequest {
 
     private Map<String, String> m_args = new HashMap<>();
-
+    private Map<String, String> m_cookies = new HashMap<>();
+    
     public HttpRicmletRequestImpl(HttpServer hs, String method, String ressname, BufferedReader br) throws IOException {
         super(hs, method, ressname, br);
 
@@ -27,8 +29,20 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
             }
         }
 
-        // on vide les headers qui restent
-        while (!(br.readLine()).isEmpty());
+        // on lit les headers pour récupérer les cookies
+        String line;
+        while ((line = br.readLine()) != null && !line.isEmpty()) {
+        	//si il y a un header de cookie, on le parse pour récupérer les cookies et les stocker dans m_cookies
+        	if (line.startsWith("Cookie:")) {
+				String[] liste_cookies = line.substring("Cookie:".length()).split(";");
+				for (String petit_cookie : liste_cookies) {
+					String[] kv = petit_cookie.trim().split("=", 2);
+					if (kv.length == 2)
+						m_cookies.put(kv[0], kv[1]);
+				}
+			}
+        }
+        
     }
 
     @Override
@@ -37,7 +51,9 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
     }
 
     @Override
-    public String getCookie(String name) { return null; }
+    public String getCookie(String name) { 
+		return m_cookies.get(name);
+	}
 
     @Override
     public HttpSession getSession() { return null; }

@@ -12,5 +12,7 @@ public class HttpRicmletResponseImpl extends HttpResponseImpl implements HttpRic
     }
 
     @Override
-    public void setCookie(String name, String value) {  }
+    public void setCookie(String name, String value) {
+   	 	m_ps.println("Set-Cookie: " + name + "=" + value); // on envoie le cookie dans le header de la réponse avec le protocole HTTP
+    }
 }
