@@ -10,8 +10,10 @@ import httpserver.itf.HttpResponse;
 import httpserver.itf.HttpSession;
 
 public class HttpRicmletRequestImpl extends HttpRicmletRequest {
+    private final static String SESSION_COOKIE_NAME = "session_id";
 
     private Map<String, String> m_args = new HashMap<>();
+    private HttpSession m_session;
 
     public HttpRicmletRequestImpl(HttpServer hs, String method, String ressname, BufferedReader br) throws IOException {
         super(hs, method, ressname, br);
@@ -27,6 +29,9 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
             }
         }
 
+        String sessionId = getCookie(SESSION_COOKIE_NAME);
+        m_session = hs.getSession(sessionId);
+
         // on vide les headers qui restent
         while (!(br.readLine()).isEmpty());
     }
@@ -40,7 +45,7 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
     public String getCookie(String name) { return null; }
 
     @Override
-    public HttpSession getSession() { return null; }
+    public HttpSession getSession() { return m_session; }
 
     @Override
     public void process(HttpResponse resp) throws Exception {
@@ -48,6 +53,7 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
         String clsname = m_ressname.substring("/ricmlets/".length()).replace('/', '.');
         try {
             m_hs.getInstance(clsname).doGet(this, (HttpRicmletResponseImpl) resp);
+            ((HttpRicmletResponseImpl) resp).setCookie(SESSION_COOKIE_NAME, m_session.getId());
         } catch (ClassNotFoundException e) {
             resp.setReplyError(404, "Ricmlet not found");
             resp.beginBody();

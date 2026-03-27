@@ -7,13 +7,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.StringTokenizer;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 import httpserver.itf.HttpRequest;
 import httpserver.itf.HttpResponse;
 import httpserver.itf.HttpRicmlet;
+import httpserver.itf.HttpSession;
 
 
 /**
@@ -32,6 +31,7 @@ public class HttpServer {
 	private File m_folder;  // default folder for accessing static resources (files)
 	private ServerSocket m_ssoc;
 	private Map<String, HttpRicmlet> m_ricmlets = new HashMap<>();
+	private Map<String, HttpSession> m_sessions = new HashMap<>();
 
 
 	protected HttpServer(int port, String folderName) {
@@ -64,9 +64,26 @@ public class HttpServer {
 	    }
 	}
 
+	private HttpSession newSession() {
+		HttpSession s = new Session();
+		addSession(s);
+		return s;
+	}
 
+	private void addSession(HttpSession session) {
+		m_sessions.put(session.getId(), session);
+	}
 
+	public synchronized HttpSession getSession(String sessionId) {
+		HttpSession s;
 
+		s = m_sessions.get(sessionId);
+		if (s == null) {
+			s = newSession();
+		}
+
+		return s;
+	}
 
 	/*
 	 * Reads a request on the given input stream and returns the corresponding HttpRequest object
