@@ -26,12 +26,13 @@ import httpserver.itf.HttpSession;
  *    ...
  */
 public class HttpServer {
+	private static final long DELAY_BEFORE_SESSION_DESTRUCTION = 100000; // in ms
 
 	private int m_port;
 	private File m_folder;  // default folder for accessing static resources (files)
 	private ServerSocket m_ssoc;
 	private Map<String, HttpRicmlet> m_ricmlets = new HashMap<>();
-	private Map<String, HttpSession> m_sessions = new HashMap<>();
+	private Map<String, Session> m_sessions = new HashMap<>();
 
 
 	protected HttpServer(int port, String folderName) {
@@ -65,13 +66,9 @@ public class HttpServer {
 	}
 
 	private HttpSession newSession() {
-		HttpSession s = new Session();
-		addSession(s);
+		Session s = new Session(DELAY_BEFORE_SESSION_DESTRUCTION);
+		m_sessions.put(s.getId(), s);
 		return s;
-	}
-
-	private void addSession(HttpSession session) {
-		m_sessions.put(session.getId(), session);
 	}
 
 	public synchronized HttpSession getSession(String sessionId) {
@@ -83,6 +80,14 @@ public class HttpServer {
 		}
 
 		return s;
+	}
+
+	public synchronized void removeSessions() {
+		for (Session s : m_sessions.values()) {
+			if (s.shouldBeDestroyed()) {
+				m_sessions.remove(s.getId());
+			}
+		}
 	}
 
 	/*
@@ -121,6 +126,11 @@ public class HttpServer {
 	 * Server main loop
 	 */
 	protected void loop() {
+		// creation of SessionRemover
+		SessionRemover sr = new SessionRemover();
+		sr.setDaemon(true);
+		sr.start();
+
 		try {
 			while (true) {
 				Socket soc = m_ssoc.accept();
@@ -146,5 +156,22 @@ public class HttpServer {
 		}
 	}
 
+	private class SessionRemover extends Thread {
+		private SessionRemover() {
+			super("SessionRemover");
+		}
+
+		@Override
+		public void run() {
+			while (true) {
+				removeSessions();
+				try {
+					sleep(500);
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+	}
 }
 
