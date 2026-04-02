@@ -30,9 +30,6 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
             }
         }
 
-        String sessionId = getCookie(SESSION_COOKIE_NAME);
-        m_session = hs.getSession(sessionId);
-
         // on lit les headers pour récupérer les cookies
         String line;
         while ((line = br.readLine()) != null && !line.isEmpty()) {
@@ -47,6 +44,8 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
 			}
         }
 
+	    String sessionId = getCookie(SESSION_COOKIE_NAME);
+	    m_session = hs.getSession(sessionId);
     }
 
     @Override
@@ -67,8 +66,8 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
         // /ricmlets/examples/HelloRicmlet -> examples.HelloRicmlet
         String clsname = m_ressname.substring("/ricmlets/".length()).replace('/', '.');
         try {
+	        ((HttpRicmletResponseImpl) resp).setCookie(SESSION_COOKIE_NAME, m_session.getId());
             m_hs.getInstance(clsname).doGet(this, (HttpRicmletResponseImpl) resp);
-            ((HttpRicmletResponseImpl) resp).setCookie(SESSION_COOKIE_NAME, m_session.getId());
         } catch (ClassNotFoundException e) {
             resp.setReplyError(404, "Ricmlet not found");
             resp.beginBody();
