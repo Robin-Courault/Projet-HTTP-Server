@@ -64,10 +64,12 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
     @Override
     public void process(HttpResponse resp) throws Exception {
         // /ricmlets/examples/HelloRicmlet -> examples.HelloRicmlet
-        String clsname = m_ressname.substring("/ricmlets/".length()).replace('/', '.');
+        String ricmletReq = m_ressname.substring("/ricmlets/".length());
+		String appName = ricmletReq.substring(0, ricmletReq.indexOf("/"));
+		String classeName = ricmletReq.substring(ricmletReq.indexOf("/") + 1).replace("/", ".");
         try {
 	        ((HttpRicmletResponseImpl) resp).setCookie(SESSION_COOKIE_NAME, m_session.getId());
-            m_hs.getInstance(clsname).doGet(this, (HttpRicmletResponseImpl) resp);
+            m_hs.getInstance(classeName, appName).doGet(this, (HttpRicmletResponseImpl) resp);
         } catch (ClassNotFoundException e) {
             resp.setReplyError(404, "Ricmlet not found");
             resp.beginBody();

@@ -31,9 +31,9 @@ public class HttpServer {
 	private int m_port;
 	private File m_folder;  // default folder for accessing static resources (files)
 	private ServerSocket m_ssoc;
-	private Map<String, HttpRicmlet> m_ricmlets = new HashMap<>();
+	private Map<String, Map<String, HttpRicmlet>> m_apps = new HashMap<>();
 	private Map<String, Session> m_sessions = new HashMap<>();
-
+	private Application m_appManager;
 
 	protected HttpServer(int port, String folderName) {
 		m_port = port;
@@ -42,6 +42,7 @@ public class HttpServer {
 		m_folder = new File(folderName);
 		try {
 			m_ssoc=new ServerSocket(m_port);
+			m_appManager = new Application();
 			System.out.println("HttpServer started on port " + m_port);
 		} catch (IOException e) {
 			System.out.println("HttpServer Exception:" + e );
@@ -55,13 +56,21 @@ public class HttpServer {
 	
 	
 
-	public HttpRicmlet getInstance(String clsname) throws Exception {
-	    synchronized (m_ricmlets) {
-	        if (!m_ricmlets.containsKey(clsname)) {
-	            Class<?> c = Class.forName(clsname);
-	            m_ricmlets.put(clsname, (HttpRicmlet) c.getDeclaredConstructor().newInstance());
+	public HttpRicmlet getInstance(String className, String appName) throws Exception {
+	    synchronized (m_apps) {
+			Map<String, HttpRicmlet> ricmlets = m_apps.get(appName);
+			if (ricmlets != null && ricmlets.containsKey(className)) {
+				return m_apps.get(appName).get(className);
+			} else {
+				if (ricmlets == null) {
+					ricmlets = new HashMap<>();
+					m_apps.put(appName, ricmlets);
+				}
+
+				HttpRicmlet ricmlet = m_appManager.getInstance(className, appName, ClassLoader.getSystemClassLoader());
+				ricmlets.put(className, ricmlet);
+	            return ricmlet;
 	        }
-	        return m_ricmlets.get(clsname);
 	    }
 	}
 
